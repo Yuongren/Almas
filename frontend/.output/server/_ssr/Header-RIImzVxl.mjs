@@ -1,0 +1,86 @@
+import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
+import { L as Link } from "../_libs/tanstack__react-router.mjs";
+import { X, h as Menu } from "../_libs/lucide-react.mjs";
+function Logo({ className = "" }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center gap-2 ${className}`, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative h-9 w-9 rounded-xl bg-gold-gradient grid place-items-center shadow-gold", children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { viewBox: "0 0 24 24", className: "h-5 w-5 text-primary-foreground", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M4 12h2M8 8v8M12 5v14M16 8v8M20 12h-2" }) }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "leading-none", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "font-display font-bold text-base tracking-tight", children: [
+        "Almas ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-gold-gradient", children: "Skika" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-[10px] text-muted-foreground tracking-[0.2em] uppercase mt-0.5", children: "Sound of Kenya" })
+    ] })
+  ] });
+}
+const links = [
+  { to: "/", label: "Home" },
+  { to: "/features", label: "Features" },
+  { to: "/pricing", label: "Pricing" },
+  { to: "/contact", label: "Contact" }
+];
+function Header() {
+  const [open, setOpen] = reactExports.useState(false);
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "fixed top-0 inset-x-0 z-50 glass", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-6xl mx-auto px-4 h-16 flex items-center justify-between", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/", className: "shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Logo, {}) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("nav", { className: "hidden md:flex items-center gap-8 text-sm text-muted-foreground", children: links.map((l) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Link,
+        {
+          to: l.to,
+          activeOptions: { exact: true },
+          activeProps: { className: "text-gold" },
+          className: "hover:text-foreground transition",
+          children: l.label
+        },
+        l.to
+      )) }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          Link,
+          {
+            to: "/contact",
+            className: "hidden sm:inline-flex text-xs font-semibold px-4 py-2 rounded-full bg-gold-gradient text-primary-foreground shadow-gold hover:opacity-90 transition",
+            children: "Get a Demo"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          "button",
+          {
+            "aria-label": "Toggle menu",
+            onClick: () => setOpen((v) => !v),
+            className: "md:hidden h-10 w-10 grid place-items-center rounded-lg glass",
+            children: open ? /* @__PURE__ */ jsxRuntimeExports.jsx(X, { className: "h-5 w-5" }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Menu, { className: "h-5 w-5" })
+          }
+        )
+      ] })
+    ] }),
+    open && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "md:hidden border-t border-border/50 bg-background/95 backdrop-blur", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("nav", { className: "max-w-6xl mx-auto px-4 py-4 flex flex-col gap-1", children: [
+      links.map((l) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Link,
+        {
+          to: l.to,
+          onClick: () => setOpen(false),
+          activeOptions: { exact: true },
+          activeProps: { className: "text-gold bg-secondary/40" },
+          className: "px-3 py-3 rounded-lg text-sm hover:bg-secondary/30 transition",
+          children: l.label
+        },
+        l.to
+      )),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        Link,
+        {
+          to: "/contact",
+          onClick: () => setOpen(false),
+          className: "mt-2 text-center text-xs font-semibold px-4 py-3 rounded-full bg-gold-gradient text-primary-foreground shadow-gold",
+          children: "Get a Demo"
+        }
+      )
+    ] }) })
+  ] });
+}
+export {
+  Header as H,
+  Logo as L
+};

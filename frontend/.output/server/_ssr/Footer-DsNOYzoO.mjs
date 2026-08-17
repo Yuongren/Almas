@@ -1,0 +1,50 @@
+import { j as jsxRuntimeExports } from "../_libs/react.mjs";
+import { L as Link } from "../_libs/tanstack__react-router.mjs";
+import { L as Logo } from "./Header-RIImzVxl.mjs";
+import { F as Facebook, I as Instagram, T as Twitter, i as Linkedin, Y as Youtube } from "../_libs/lucide-react.mjs";
+const socials = [
+  { Icon: Facebook, href: "https://facebook.com/almasskika", label: "Facebook" },
+  { Icon: Instagram, href: "https://instagram.com/almasskika", label: "Instagram" },
+  { Icon: Twitter, href: "https://twitter.com/almasskika", label: "Twitter / X" },
+  { Icon: Linkedin, href: "https://linkedin.com/company/almasskika", label: "LinkedIn" },
+  { Icon: Youtube, href: "https://youtube.com/@almasskika", label: "YouTube" }
+];
+function Footer() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("footer", { className: "border-t border-border/50 py-12 mt-10", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-6xl mx-auto px-4 grid gap-8 md:grid-cols-3 items-start", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Logo, {}),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground max-w-xs", children: "Voice communication & telecom audio branding — engineered in Nairobi." })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("nav", { className: "flex flex-wrap md:justify-center gap-x-6 gap-y-3 text-sm text-muted-foreground", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/", className: "hover:text-gold transition", children: "Home" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/features", className: "hover:text-gold transition", children: "Features" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/pricing", className: "hover:text-gold transition", children: "Pricing" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/contact", className: "hover:text-gold transition", children: "Contact" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex md:justify-end gap-3", children: socials.map(({ Icon, href, label }) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+        "a",
+        {
+          href,
+          target: "_blank",
+          rel: "noopener noreferrer",
+          "aria-label": label,
+          className: "h-10 w-10 grid place-items-center rounded-xl glass text-muted-foreground hover:text-gold hover:border-gold/40 transition",
+          children: /* @__PURE__ */ jsxRuntimeExports.jsx(Icon, { className: "h-4 w-4" })
+        },
+        label
+      )) })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-6xl mx-auto px-4 mt-8 pt-6 border-t border-border/40 text-xs text-muted-foreground flex flex-col md:flex-row justify-between gap-2", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { children: [
+        "© ",
+        (/* @__PURE__ */ new Date()).getFullYear(),
+        " Almas Skika. All rights reserved."
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Nairobi, Kenya" })
+    ] })
+  ] });
+}
+export {
+  Footer as F
+};
