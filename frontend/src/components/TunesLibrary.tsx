@@ -63,17 +63,11 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
     return [...tracks].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
   }, [tracks]);
 
-  async function ensureUrl(track: AudioTrack): Promise<string | null> {
+  async function ensureUrl(track: AudioTrack) {
     console.log("========== AUDIO PLAYBACK DEBUG ==========");
     console.log("Track:", track.title);
     console.log("Track ID:", track.id);
     console.log("Storage path:", track.storage_path);
-
-    // Use existing URL if already generated
-    if (audioUrls[track.id]) {
-      console.log("Using cached audio URL:", audioUrls[track.id]);
-      return audioUrls[track.id];
-    }
 
     const { data, error } = await supabase.storage
       .from("audio-tracks")
@@ -85,16 +79,13 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
     if (error || !data?.signedUrl) {
       console.error(
         "Unable to generate signed audio URL:",
-        error?.message || "No signed URL returned"
+        error?.message
       );
-
-      console.log("==========================================");
 
       return null;
     }
 
-    console.log("Generated signed URL:", data.signedUrl);
-    console.log("==========================================");
+    console.log("Signed URL generated successfully");
 
     setAudioUrls((prev) => ({
       ...prev,
@@ -110,16 +101,9 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
     const url = await ensureUrl(track);
 
     if (!url) {
-      console.error(
-        "Cannot play audio because no URL was generated."
-      );
-
-      alert("Unable to load this audio file. Please try again.");
-
+      console.error("Cannot play audio because no URL was generated.");
       return;
     }
-
-    console.log("Audio URL ready:", url);
 
     setPlayingId(track.id);
   }
