@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      demo_requests: {
+        Row: {
+          contact: string
+          created_at: string
+          id: string
+          name: string
+          organisation: string | null
+          request: string
+        }
+        Insert: {
+          contact: string
+          created_at?: string
+          id?: string
+          name: string
+          organisation?: string | null
+          request: string
+        }
+        Update: {
+          contact?: string
+          created_at?: string
+          id?: string
+          name?: string
+          organisation?: string | null
+          request?: string
+        }
+        Relationships: []
+      }
       audio_tracks: {
         Row: {
           category: Database["public"]["Enums"]["audio_category"]

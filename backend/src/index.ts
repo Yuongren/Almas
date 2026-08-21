@@ -1,12 +1,16 @@
-import 'dotenv/config';
+import "dotenv/config";
 
-import Fastify from 'fastify';
-import cors from '@fastify/cors';
-import multipart from '@fastify/multipart';
-import { audioRoutes } from './routes/audio.js';
+import Fastify from "fastify";
+import cors from "@fastify/cors";
+import multipart from "@fastify/multipart";
+
+import { audioRoutes } from "./routes/audio.js";
+import { demoRequests } from "./routes/demoRequests.js";
 
 const server = Fastify({
   logger: true,
+
+  // Allow audio uploads up to 50 MB.
   bodyLimit: 50 * 1024 * 1024,
 });
 
@@ -19,11 +23,21 @@ async function start() {
     await server.register(multipart, {
       limits: {
         fileSize: 50 * 1024 * 1024,
+        files: 1,
+        fields: 20,
       },
+
+      // Important:
+      // Do not automatically consume the whole file into memory.
+      attachFieldsToBody: false,
     });
 
     await server.register(audioRoutes, {
-      prefix: '/api',
+      prefix: "/api",
+    });
+
+    await server.register(demoRequests, {
+      prefix: "/api",
     });
 
     const port = Number(
@@ -32,7 +46,7 @@ async function start() {
 
     await server.listen({
       port,
-      host: '0.0.0.0',
+      host: "0.0.0.0",
     });
 
     console.log(
@@ -40,12 +54,12 @@ async function start() {
     );
 
     console.log(
-      'Supabase URL configured:',
+      "Supabase URL configured:",
       Boolean(process.env.SUPABASE_URL)
     );
 
     console.log(
-      'Supabase service role key configured:',
+      "Supabase service role key configured:",
       Boolean(
         process.env.SUPABASE_SERVICE_ROLE_KEY
       )

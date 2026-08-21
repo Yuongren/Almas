@@ -231,3 +231,25 @@ export async function rateTrack(
     );
   }
 }
+
+export async function recordTrackPlay(trackId: string) {
+  try {
+    let sessionId = localStorage.getItem("audio_session_id");
+
+    if (!sessionId) {
+      sessionId = crypto.randomUUID();
+      localStorage.setItem("audio_session_id", sessionId);
+    }
+
+    const { error } = await supabase.rpc("record_audio_play", {
+      p_track_id: trackId,
+      p_session_id: sessionId,
+    });
+
+    if (error) {
+      console.warn("Unable to record audio play:", error.message);
+    }
+  } catch (error) {
+    console.warn("Audio play tracking failed:", error);
+  }
+}

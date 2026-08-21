@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AudioWave } from "@/components/AudioWave";
+import { TunesLibrary } from "@/components/TunesLibrary";
 import {
   Phone, Mic, Megaphone, Church, Music4, Languages,
   Headphones, Radio, ShieldCheck, Zap, Globe2, Sparkles, ArrowRight,
@@ -39,6 +41,8 @@ const why = [
 ];
 
 function FeaturesPage() {
+  const [libraryOpen, setLibraryOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Header />
@@ -63,14 +67,23 @@ function FeaturesPage() {
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {features.map((s) => (
-            <div key={s.title} className="group p-6 rounded-2xl glass shadow-card hover:-translate-y-1 hover:shadow-gold transition-all">
-              <div className="h-11 w-11 rounded-xl bg-gold-gradient grid place-items-center shadow-gold mb-5 group-hover:scale-110 transition">
+            <div key={s.title} className="group flex min-h-[218px] flex-col p-6 rounded-2xl glass shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-gold">
+              <div className="h-11 w-11 shrink-0 rounded-xl bg-gold-gradient grid place-items-center shadow-gold mb-5 transition-transform duration-300 group-hover:scale-105 group-hover:rotate-2">
                 <s.icon className="h-5 w-5 text-primary-foreground" />
               </div>
-              <h3 className="font-display font-semibold text-lg">{s.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
+              <h3 className="font-display font-semibold text-lg leading-tight">{s.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{s.desc}</p>
             </div>
           ))}
+        </div>
+        <div className="mt-10 flex justify-center px-4">
+          <button
+            type="button"
+            onClick={() => setLibraryOpen(true)}
+            className="inline-flex items-center gap-2 rounded-full bg-gold-gradient px-6 py-3.5 font-semibold text-primary-foreground shadow-gold transition duration-300 hover:scale-[1.02] hover:shadow-[0_12px_44px_-12px_oklch(0.82_0.14_85_/_65%)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.99]"
+          >
+            <Headphones className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" /> Hear samples
+          </button>
         </div>
       </section>
 
@@ -80,12 +93,12 @@ function FeaturesPage() {
           <h2 className="text-3xl md:text-4xl font-bold max-w-2xl">Built in Kenya. <span className="text-gold-gradient">Heard everywhere.</span></h2>
           <ul className="mt-10 grid md:grid-cols-3 gap-4">
             {why.map((f) => (
-              <li key={f.t} className="p-6 rounded-2xl glass">
-                <div className="h-10 w-10 rounded-xl glass grid place-items-center text-gold mb-4">
+              <li key={f.t} className="group min-h-[164px] rounded-2xl glass p-6 transition-colors duration-300 hover:border-gold/25">
+                <div className="mb-4 grid h-10 w-10 place-items-center rounded-xl glass text-gold transition-transform duration-300 group-hover:scale-105">
                   <f.i className="h-5 w-5" />
                 </div>
-                <div className="font-semibold">{f.t}</div>
-                <div className="text-sm text-muted-foreground mt-1">{f.d}</div>
+                <div className="font-semibold leading-tight">{f.t}</div>
+                <div className="mt-1 text-sm leading-6 text-muted-foreground">{f.d}</div>
               </li>
             ))}
           </ul>
@@ -98,6 +111,7 @@ function FeaturesPage() {
       </section>
 
       <Footer />
+      {libraryOpen && <TunesLibrary onClose={() => setLibraryOpen(false)} />}
     </div>
   );
 }

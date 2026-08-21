@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { AUDIO_CATEGORIES, categoryLabel, fetchTracks, type AudioTrack } from "@/lib/audio";
 import { uploadAudioTrack } from "@/lib/api/audio.functions";
 import { Trash2, Upload, LogOut, DollarSign } from "lucide-react";
+import type { Tables } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({ meta: [{ title: "Admin — Almas Skika" }] }),
@@ -19,6 +20,7 @@ function AdminPage() {
   const [accessChecked, setAccessChecked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [demoRequests, setDemoRequests] = useState<Tables<"demo_requests">[]>([]);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -33,6 +35,11 @@ function AdminPage() {
     setLoading(true);
     try {
       setTracks(await fetchTracks());
+      const { data: requests } = await supabase
+        .from("demo_requests")
+        .select("*")
+        .order("created_at", { ascending: false });
+      setDemoRequests(requests ?? []);
     } finally {
       setLoading(false);
     }
@@ -272,6 +279,27 @@ function AdminPage() {
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <h2 className="font-display font-bold text-xl mt-12 mb-4">Demo requests ({demoRequests.length})</h2>
+        {demoRequests.length === 0 ? (
+          <p className="text-muted-foreground">No demo requests yet.</p>
+        ) : (
+          <div className="grid gap-3">
+            {demoRequests.map((request) => (
+              <div key={request.id} className="p-4 rounded-xl glass grid gap-1">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <div className="font-semibold">{request.name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(request.created_at).toLocaleString()}
+                  </div>
+                </div>
+                <div className="text-sm text-gold">{request.contact}</div>
+                {request.organisation && <div className="text-sm">{request.organisation}</div>}
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{request.request}</p>
               </div>
             ))}
           </div>

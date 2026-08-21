@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 import { getServerConfig } from "../config.server";
 
@@ -20,3 +21,34 @@ export const getGreeting = createServerFn({ method: "POST" })
       mode: config.nodeEnv ?? "unknown",
     };
   });
+
+const demoRequestSchema = z.object({
+  name: z.string().trim().min(1),
+  contact: z.string().trim().min(1),
+  organisation: z.string().trim().max(200).optional(),
+  request: z.string().trim().min(1).max(2000),
+});
+
+export async function submitDemoRequest(
+  input: z.input<typeof demoRequestSchema>
+) {
+  const data = demoRequestSchema.parse(input);
+
+  const response = await fetch("/api/demo-requests", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      result.error || "Unable to submit your request."
+    );
+  }
+
+  return result;
+}

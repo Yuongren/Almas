@@ -1,7 +1,7 @@
 import { j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { L as Link } from "../_libs/tanstack__react-router.mjs";
 import { L as Logo } from "./Header-RIImzVxl.mjs";
-import { F as Facebook, I as Instagram, T as Twitter, i as Linkedin, Y as Youtube } from "../_libs/lucide-react.mjs";
+import { F as Facebook, I as Instagram, T as Twitter, d as Linkedin, Y as Youtube } from "../_libs/lucide-react.mjs";
 const socials = [
   { Icon: Facebook, href: "https://facebook.com/almasskika", label: "Facebook" },
   { Icon: Instagram, href: "https://instagram.com/almasskika", label: "Instagram" },

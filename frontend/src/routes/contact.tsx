@@ -3,6 +3,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AudioWave } from "@/components/AudioWave";
 import { ArrowRight, Phone, Mail, MapPin } from "lucide-react";
+import { useState } from "react";
+import { submitDemoRequest } from "@/lib/api/example.functions";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -19,6 +21,25 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const [form, setForm] = useState({ name: "", contact: "", organisation: "", request: "" });
+  const [status, setStatus] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setBusy(true);
+    setStatus(null);
+    try {
+      await submitDemoRequest(form);
+      setForm({ name: "", contact: "", organisation: "", request: "" });
+      setStatus("Thanks. We'll be in touch within 24 hours.");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Unable to submit your request.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Header />
@@ -35,13 +56,14 @@ function ContactPage() {
             Tell us about your project. We'll send back a custom audio sample within 48 hours — no obligation.
           </p>
 
-          <form className="mt-10 grid gap-3 max-w-md mx-auto text-left" onSubmit={(e) => e.preventDefault()}>
-            <input className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Your name" />
-            <input className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Email or phone" />
-            <input className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Organisation (optional)" />
-            <textarea rows={4} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground resize-none" placeholder="What kind of audio do you need?" />
-            <button className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.01] transition">
-              Request demo <ArrowRight className="h-4 w-4" />
+          <form className="mt-10 grid gap-3 max-w-md mx-auto text-left" onSubmit={handleSubmit}>
+            <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Your name" />
+            <input required value={form.contact} onChange={(e) => setForm({ ...form, contact: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Email or phone" />
+            <input value={form.organisation} onChange={(e) => setForm({ ...form, organisation: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Organisation (optional)" />
+            <textarea required rows={4} value={form.request} onChange={(e) => setForm({ ...form, request: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground resize-none" placeholder="What kind of audio do you need?" />
+            {status && <p className="text-sm text-gold" role="status">{status}</p>}
+            <button type="submit" disabled={busy} className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.01] transition disabled:opacity-50">
+              {busy ? "Sending…" : "Request demo"} {!busy && <ArrowRight className="h-4 w-4" />}
             </button>
           </form>
 

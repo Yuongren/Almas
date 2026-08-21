@@ -12,6 +12,7 @@ import {
 } from "@/lib/audio";
 import { useAuth } from "@/hooks/useAuth";
 import { StarRating } from "./StarRating";
+import { submitDemoRequest } from "@/lib/api/example.functions";
 
 export function TunesLibrary({ onClose }: { onClose: () => void }) {
   const { user } = useAuth();
@@ -23,6 +24,7 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
   const [demoFor, setDemoFor] = useState<AudioTrack | null>(null);
   const [demoContact, setDemoContact] = useState("");
   const [demoStatus, setDemoStatus] = useState<string | null>(null);
+  const [demoBusy, setDemoBusy] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [audioUrls, setAudioUrls] = useState<Record<string, string>>({});
 
@@ -367,8 +369,18 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
                   setDemoStatus("Please enter your contact details.");
                   return;
                 }
-                setDemoStatus(`Thanks! We'll reach out to ${demoContact} shortly.`);
-                setDemoContact("");
+                setDemoBusy(true);
+                submitDemoRequest({
+                  name: "Audio library demo request",
+                  contact: demoContact,
+                  request: `Demo requested for ${demoFor.title}.`,
+                })
+                  .then(() => {
+                    setDemoStatus(`Thanks! We'll reach out to ${demoContact} shortly.`);
+                    setDemoContact("");
+                  })
+                  .catch(() => setDemoStatus("Unable to submit your request."))
+                  .finally(() => setDemoBusy(false));
               }}
               className="space-y-4"
             >
@@ -384,9 +396,10 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
               {demoStatus && <p className="text-sm text-gold">{demoStatus}</p>}
               <button
                 type="submit"
+                disabled={demoBusy}
                 className="w-full py-3 rounded-xl bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition"
               >
-                Send request
+                {demoBusy ? "Sending…" : "Send request"}
               </button>
             </form>
             <button

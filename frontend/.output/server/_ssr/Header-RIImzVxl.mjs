@@ -1,6 +1,6 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { L as Link } from "../_libs/tanstack__react-router.mjs";
-import { X, h as Menu } from "../_libs/lucide-react.mjs";
+import { X, c as Menu } from "../_libs/lucide-react.mjs";
 function Logo({ className = "" }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `flex items-center gap-2 ${className}`, children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "relative h-9 w-9 rounded-xl bg-gold-gradient grid place-items-center shadow-gold", children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { viewBox: "0 0 24 24", className: "h-5 w-5 text-primary-foreground", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ jsxRuntimeExports.jsx("path", { d: "M4 12h2M8 8v8M12 5v14M16 8v8M20 12h-2" }) }) }),

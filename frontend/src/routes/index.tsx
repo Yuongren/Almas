@@ -10,6 +10,7 @@ import {
   Church, Languages, Megaphone, ArrowRight, Sparkles,
   ShieldCheck, Zap, Globe2, Check, Headphones,
 } from "lucide-react";
+import { submitDemoRequest } from "@/lib/api/example.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -41,6 +42,25 @@ const steps = [
 ];
 
 function Index() {
+  const [demoForm, setDemoForm] = useState({ name: "", contact: "", request: "" });
+  const [demoStatus, setDemoStatus] = useState<string | null>(null);
+  const [demoBusy, setDemoBusy] = useState(false);
+
+  async function handleDemoSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setDemoBusy(true);
+    setDemoStatus(null);
+    try {
+      await submitDemoRequest(demoForm);
+      setDemoForm({ name: "", contact: "", request: "" });
+      setDemoStatus("Thanks. We'll be in touch within 24 hours.");
+    } catch {
+      setDemoStatus("Unable to submit your request.");
+    } finally {
+      setDemoBusy(false);
+    }
+  }
+
   const [libraryOpen, setLibraryOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
@@ -270,21 +290,22 @@ function Index() {
           <h2 className="text-3xl md:text-5xl font-bold">Let's make your brand <span className="text-gold-gradient">heard.</span></h2>
           <p className="mt-4 text-muted-foreground max-w-xl mx-auto">Tell us about your project. We'll send back a custom audio sample within 48 hours — no obligation.</p>
 
-          <form className="mt-10 grid gap-4 max-w-md mx-auto text-left" onSubmit={(e) => e.preventDefault()}>
+          <form className="mt-10 grid gap-4 max-w-md mx-auto text-left" onSubmit={handleDemoSubmit}>
             <div className="grid gap-1.5">
               <label htmlFor="name" className="text-xs uppercase tracking-widest text-muted-foreground">Name</label>
-              <input id="name" name="name" required maxLength={100} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Your full name" />
+              <input id="name" name="name" required maxLength={100} value={demoForm.name} onChange={(e) => setDemoForm({ ...demoForm, name: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Your full name" />
             </div>
             <div className="grid gap-1.5">
               <label htmlFor="email" className="text-xs uppercase tracking-widest text-muted-foreground">Email</label>
-              <input id="email" name="email" type="email" required maxLength={255} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="you@company.com" />
+              <input id="email" name="email" type="email" required maxLength={255} value={demoForm.contact} onChange={(e) => setDemoForm({ ...demoForm, contact: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="you@company.com" />
             </div>
             <div className="grid gap-1.5">
               <label htmlFor="message" className="text-xs uppercase tracking-widest text-muted-foreground">Message</label>
-              <textarea id="message" name="message" rows={4} required maxLength={1000} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground resize-none" placeholder="What kind of audio do you need?" />
+              <textarea id="message" name="message" rows={4} required maxLength={1000} value={demoForm.request} onChange={(e) => setDemoForm({ ...demoForm, request: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground resize-none" placeholder="What kind of audio do you need?" />
             </div>
-            <button type="submit" className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.01] transition">
-              Request a Demo <ArrowRight className="h-4 w-4" />
+            {demoStatus && <p className="text-sm text-gold" role="status">{demoStatus}</p>}
+            <button type="submit" disabled={demoBusy} className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.01] transition disabled:opacity-50">
+              {demoBusy ? "Sending…" : "Request a Demo"} {!demoBusy && <ArrowRight className="h-4 w-4" />}
             </button>
           </form>
 
