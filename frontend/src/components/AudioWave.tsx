@@ -2,11 +2,15 @@ interface AudioWaveProps {
   bars?: number;
   className?: string;
   variant?: "gold" | "neon" | "mixed";
+  /** Speeds up and brightens the wave on hover — use for interactive contexts (buttons, cards). */
+  interactive?: boolean;
 }
 
-export function AudioWave({ bars = 32, className = "", variant = "mixed" }: AudioWaveProps) {
+export function AudioWave({ bars = 32, className = "", variant = "mixed", interactive = false }: AudioWaveProps) {
   return (
-    <div className={`flex items-center justify-center gap-[3px] h-16 ${className}`}>
+    <div
+      className={`group flex items-center justify-center gap-[3px] h-16 ${className}`}
+    >
       {Array.from({ length: bars }).map((_, i) => {
         const color =
           variant === "gold"
@@ -20,10 +24,13 @@ export function AudioWave({ bars = 32, className = "", variant = "mixed" }: Audi
         return (
           <span
             key={i}
-            className={`w-[3px] rounded-full ${color} wave-bar`}
+            className={`w-[3px] rounded-full ${color} wave-bar transition-[opacity,filter] duration-300 ${
+              interactive ? "group-hover:brightness-125" : ""
+            }`}
             style={{
               height: `${height}%`,
               animationDelay: `${i * 0.05}s`,
+              animationDuration: interactive ? "0.7s" : "1.2s",
             }}
           />
         );

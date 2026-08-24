@@ -6,6 +6,7 @@ import { ArrowRight, Phone, Mail, MapPin } from "lucide-react";
 import { useState } from "react";
 import { submitDemoRequest } from "@/lib/api/example.functions";
 
+
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [

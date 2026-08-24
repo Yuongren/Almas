@@ -58,6 +58,39 @@
   100% { background-position: 200% 0; }
 }
 
+/* ---------------------------------------------------------------
+   NEW: motion + interaction keyframes
+   These are additive — nothing above this line changed.
+--------------------------------------------------------------- */
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes reveal-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes reveal-side {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes gradient-drift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes sheen-sweep {
+  0% { transform: translateX(-130%) skewX(-12deg); }
+  100% { transform: translateX(230%) skewX(-12deg); }
+}
+@keyframes ring-pulse {
+  0% { box-shadow: 0 0 0 0 oklch(0.82 0.14 85 / 45%); }
+  100% { box-shadow: 0 0 0 14px oklch(0.82 0.14 85 / 0%); }
+}
+@keyframes ambient-glow {
+  0%, 100% { opacity: 0.5; transform: translate3d(0, 0, 0) scale(1); }
+  50% { opacity: 0.85; transform: translate3d(0, -6px, 0) scale(1.03); }
+}
+
 :root {
   --radius: 1rem;
   /* Deep midnight navy base */
@@ -179,6 +212,9 @@
   .bg-mesh { background: var(--gradient-mesh); }
   .text-gold-gradient {
     background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .wave-bar {
     animation: var(--animate-wave);
@@ -211,5 +247,147 @@
       linear-gradient(oklch(0.82 0.14 85 / 6%) 1px, transparent 1px),
       linear-gradient(90deg, oklch(0.82 0.14 85 / 6%) 1px, transparent 1px);
     background-size: 40px 40px;
+  }
+
+  /* -----------------------------------------------------------
+     NEW: scroll-reveal system
+     Paired with the <Reveal> component / useReveal hook, which
+     toggles the `is-visible` class once an element enters the
+     viewport. Falls back to fully visible with no JS.
+  ----------------------------------------------------------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.94);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal-scale.is-visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .reveal-side {
+    opacity: 0;
+    transform: translateX(-24px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal-side.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  /* Optional per-item stagger — pair with style={{ transitionDelay: `${i * 60}ms` }} */
+  .reveal-delay-1 { transition-delay: 80ms; }
+  .reveal-delay-2 { transition-delay: 160ms; }
+  .reveal-delay-3 { transition-delay: 240ms; }
+  .reveal-delay-4 { transition-delay: 320ms; }
+  .reveal-delay-5 { transition-delay: 400ms; }
+  .reveal-delay-6 { transition-delay: 480ms; }
+
+  /* Animated gradient text — for headline accents that should feel alive, sparingly */
+  .text-shimmer {
+    background: linear-gradient(
+      110deg,
+      var(--gold) 20%,
+      var(--gold-glow) 40%,
+      oklch(0.97 0.02 90) 50%,
+      var(--gold-glow) 60%,
+      var(--gold) 80%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 5s linear infinite;
+  }
+
+  /* Slow drifting hero gradient — reads as ambient, not busy */
+  .bg-hero-animated {
+    background: var(--gradient-hero);
+    background-size: 160% 160%;
+    animation: gradient-drift 18s ease-in-out infinite;
+  }
+
+  /* Card lift + border glow on hover, consistent across the app */
+  .card-interactive {
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+  .card-interactive:hover {
+    transform: translateY(-6px);
+    border-color: oklch(0.82 0.14 85 / 32%);
+    box-shadow: var(--shadow-card), var(--shadow-gold);
+  }
+
+  /* Button sheen sweep — a single deliberate light pass on hover */
+  .btn-sheen {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .btn-sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(115deg, transparent 0%, oklch(1 0 0 / 35%) 45%, transparent 60%);
+    transform: translateX(-130%) skewX(-12deg);
+    pointer-events: none;
+  }
+  .btn-sheen:hover::after {
+    animation: sheen-sweep 0.9s ease forwards;
+  }
+
+  /* Focus/active ring pulse — used for primary CTAs to draw the eye once, on entrance */
+  .ring-pulse-once {
+    animation: ring-pulse 1.6s ease-out 1;
+  }
+
+  /* Ambient floating glow blob, for background atmosphere behind hero content */
+  .ambient-blob {
+    animation: ambient-glow 8s ease-in-out infinite;
+  }
+
+  /* Subtle grain overlay for texture on large flat panels (hero, footer) */
+  .bg-grain {
+    position: relative;
+  }
+  .bg-grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: radial-gradient(oklch(1 0 0 / 90%) 0.6px, transparent 0.6px);
+    background-size: 3px 3px;
+  }
+
+  /* Animated underline for nav-style links */
+  .link-underline {
+    position: relative;
+  }
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 100%;
+    height: 1.5px;
+    background: var(--gradient-gold);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .link-underline:hover::after,
+  .link-underline[data-active="true"]::after {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 }
