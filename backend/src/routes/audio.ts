@@ -46,6 +46,37 @@ const supabase = createClient(
   }
 );
 
+// Fetch every rating and aggregate by track_id into
+// { [track_id]: { avg, count } }. Used to enrich the
+// admin audio list without needing a DB view.
+async function getRatingsByTrack(): Promise<
+  Record<string, { avg: number; count: number }>
+> {
+  const { data, error } = await supabase
+    .from("track_ratings")
+    .select("track_id, rating");
+
+  if (error || !data) {
+    return {};
+  }
+
+  const grouped = new Map<string, { sum: number; count: number }>();
+
+  for (const row of data) {
+    const current = grouped.get(row.track_id) ?? { sum: 0, count: 0 };
+    current.sum += row.rating;
+    current.count += 1;
+    grouped.set(row.track_id, current);
+  }
+
+  return Object.fromEntries(
+    Array.from(grouped.entries()).map(([trackId, value]) => [
+      trackId,
+      { avg: value.sum / value.count, count: value.count },
+    ])
+  );
+}
+
 export const audioRoutes: FastifyPluginAsync =
   async (fastify) => {
 
@@ -118,10 +149,19 @@ export const audioRoutes: FastifyPluginAsync =
             });
           }
 
+          // Enrich each track with its rating average/count.
+          const ratingsByTrack = await getRatingsByTrack();
+
+          const items = (data ?? []).map((track) => ({
+            ...track,
+            rating_avg: ratingsByTrack[track.id]?.avg ?? null,
+            rating_count: ratingsByTrack[track.id]?.count ?? 0,
+          }));
+
           return reply.send({
             success: true,
-            items: data ?? [],
-            count: data?.length ?? 0,
+            items,
+            count: items.length,
           });
         } catch (error) {
           fastify.log.error(error, "Admin audio list failed");

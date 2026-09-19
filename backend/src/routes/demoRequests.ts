@@ -15,6 +15,8 @@ if (!recipientEmail) {
 
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
+const VALID_STATUSES = ["pending", "in_progress", "responded"];
+
 export const demoRequests: FastifyPluginAsync = async (fastify) => {
   // PUBLIC: submit contact/demo request
   fastify.post("/demo-requests", async (request, reply) => {
@@ -137,6 +139,74 @@ export const demoRequests: FastifyPluginAsync = async (fastify) => {
 
       return reply.code(500).send({
         error: "Failed to load demo requests.",
+      });
+    }
+  });
+
+  // ADMIN: update a request's status (pending / in_progress / responded)
+  fastify.patch("/admin/demo-requests/:id", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const { status } = request.body as { status: string };
+
+      if (!VALID_STATUSES.includes(status)) {
+        return reply.code(400).send({
+          error: `Status must be one of: ${VALID_STATUSES.join(", ")}`,
+        });
+      }
+
+      const { data, error } = await supabase
+        .from("demo_requests")
+        .update({ status })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        fastify.log.error(error);
+
+        return reply.code(500).send({
+          error: error.message,
+        });
+      }
+
+      return reply.send({
+        success: true,
+        item: data,
+      });
+    } catch (error) {
+      fastify.log.error(error);
+
+      return reply.code(500).send({
+        error: "Failed to update demo request.",
+      });
+    }
+  });
+
+  // ADMIN: delete a request
+  fastify.delete("/admin/demo-requests/:id", async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+
+      const { error } = await supabase
+        .from("demo_requests")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        fastify.log.error(error);
+
+        return reply.code(500).send({
+          error: error.message,
+        });
+      }
+
+      return reply.send({ success: true });
+    } catch (error) {
+      fastify.log.error(error);
+
+      return reply.code(500).send({
+        error: "Failed to delete demo request.",
       });
     }
   });
