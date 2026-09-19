@@ -13,7 +13,7 @@ if (!recipientEmail) {
   console.warn("WARNING: DEMO_REQUEST_RECIPIENT is missing.");
 }
 
-const resend = new Resend(resendApiKey ?? "");
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 export const demoRequests: FastifyPluginAsync = async (fastify) => {
   // PUBLIC: submit contact/demo request
@@ -61,7 +61,7 @@ export const demoRequests: FastifyPluginAsync = async (fastify) => {
       // Send notification email via Resend.
       // Failure here should not fail the whole request —
       // the record is already safely saved in Supabase.
-      if (resendApiKey && recipientEmail) {
+      if (resend && recipientEmail) {
         try {
           const { error: emailError } = await resend.emails.send({
             from: "Demo Requests <onboarding@resend.dev>",

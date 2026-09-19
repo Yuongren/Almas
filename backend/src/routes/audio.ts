@@ -98,7 +98,7 @@ export const audioRoutes: FastifyPluginAsync =
           const { data, error } = await supabase
             .from("audio_tracks")
             .select(
-              "id,title,description,category,storage_path,is_paid,skiza_code,created_at"
+              "id,title,description,category,storage_path,is_paid,skiza_code,play_count,created_at"
             )
             .order("created_at", { ascending: false });
 

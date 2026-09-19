@@ -43,6 +43,22 @@ export function categoryLabel(value: string) {
 }
 
 /**
+ * Get (or create) a per-browser anonymous session id.
+ * Used to dedupe plays and to let a visitor update their own
+ * rating later, without requiring any sign-in.
+ */
+function getSessionId(): string {
+  let sessionId = localStorage.getItem("audio_session_id");
+
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem("audio_session_id", sessionId);
+  }
+
+  return sessionId;
+}
+
+/**
  * Fetch all audio tracks from Supabase.
  */
 export async function fetchTracks(): Promise<AudioTrack[]> {
@@ -50,14 +66,7 @@ export async function fetchTracks(): Promise<AudioTrack[]> {
     .from("audio_tracks")
     .select(
       `
-        id,
-        title,
-        description,
-        category,
-        storage_path,
-        is_paid,
-        skiza_code,
-        created_at
+      id,title,description,category,storage_path,is_paid,skiza_code,play_count,created_at
       `
     )
     .order("created_at", { ascending: false });
@@ -148,19 +157,23 @@ export async function fetchRatings(): Promise<
 }
 
 /**
- * Fetch the current user's ratings.
+ * Fetch this browser's own ratings, keyed by track id.
+ * No sign-in required — identified by an anonymous session id
+ * stored in localStorage.
  */
-export async function fetchMyRatings(
-  userId: string
-): Promise<Record<string, number>> {
+export async function fetchMyRatings(): Promise<
+  Record<string, number>
+> {
+  const sessionId = getSessionId();
+
   const { data, error } = await supabase
     .from("track_ratings")
     .select("track_id, rating")
-    .eq("user_id", userId);
+    .eq("session_id", sessionId);
 
   if (error) {
     console.warn(
-      "Unable to load user ratings:",
+      "Unable to load your ratings:",
       error.message
     );
 
@@ -176,23 +189,25 @@ export async function fetchMyRatings(
 }
 
 /**
- * Create or update a user's rating.
+ * Create or update this browser's rating for a track.
+ * Anonymous — no sign-in required.
  */
 export async function rateTrack(
   trackId: string,
-  rating: number,
-  userId: string
+  rating: number
 ) {
   if (rating < 1 || rating > 5) {
     throw new Error("Rating must be between 1 and 5.");
   }
+
+  const sessionId = getSessionId();
 
   const { data: existing, error: existingError } =
     await supabase
       .from("track_ratings")
       .select("id")
       .eq("track_id", trackId)
-      .eq("user_id", userId)
+      .eq("session_id", sessionId)
       .maybeSingle();
 
   if (existingError) {
@@ -221,7 +236,7 @@ export async function rateTrack(
     .from("track_ratings")
     .insert({
       track_id: trackId,
-      user_id: userId,
+      session_id: sessionId,
       rating,
     });
 
@@ -232,14 +247,14 @@ export async function rateTrack(
   }
 }
 
+/**
+ * Record a play of a track. Deduped per browser session on the
+ * server side (via record_audio_play), so replaying the same
+ * track in the same session won't inflate the count.
+ */
 export async function recordTrackPlay(trackId: string) {
   try {
-    let sessionId = localStorage.getItem("audio_session_id");
-
-    if (!sessionId) {
-      sessionId = crypto.randomUUID();
-      localStorage.setItem("audio_session_id", sessionId);
-    }
+    const sessionId = getSessionId();
 
     const { error } = await supabase.rpc("record_audio_play", {
       p_track_id: trackId,

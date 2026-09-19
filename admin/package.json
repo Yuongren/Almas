@@ -8,6 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "jspdf": "^4.2.1",
     "lucide-react": "^1.33.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

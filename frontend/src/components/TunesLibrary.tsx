@@ -7,15 +7,14 @@ import {
   fetchRatings,
   fetchTracks,
   rateTrack,
+  recordTrackPlay,
   type AudioTrack,
   type RatingSummary,
 } from "@/lib/audio";
-import { useAuth } from "@/hooks/useAuth";
 import { StarRating } from "./StarRating";
 import { submitDemoRequest } from "@/lib/api/example.functions";
 
 export function TunesLibrary({ onClose }: { onClose: () => void }) {
-  const { user } = useAuth();
   const [tracks, setTracks] = useState<AudioTrack[]>([]);
   const [ratings, setRatings] = useState<Record<string, RatingSummary>>({});
   const [myRatings, setMyRatings] = useState<Record<string, number>>({});
@@ -57,9 +56,8 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
   }, []);
 
   useEffect(() => {
-    if (user) fetchMyRatings(user.id).then(setMyRatings);
-    else setMyRatings({});
-  }, [user]);
+    fetchMyRatings().then(setMyRatings);
+  }, []);
 
   const samples = useMemo(() => {
     return [...tracks].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
@@ -108,14 +106,11 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
     }
 
     setPlayingId(track.id);
+    recordTrackPlay(track.id);
   }
 
   async function handleRate(track: AudioTrack, v: number) {
-    if (!user) {
-      alert("Please sign in to rate tracks. Visit /auth");
-      return;
-    }
-    await rateTrack(track.id, v, user.id);
+    await rateTrack(track.id, v);
     setMyRatings((p) => ({ ...p, [track.id]: v }));
     const r = await fetchRatings();
     setRatings(r);
