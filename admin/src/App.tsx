@@ -15,7 +15,10 @@ import {
   Star,
   Clock,
   CheckCheck,
+  LayoutDashboard,
+  Newspaper,
 } from "lucide-react";
+import BlogAdmin from "./BlogAdmin";
 
 type AudioTrack = {
   id: string;
@@ -58,6 +61,12 @@ const STATUS_COLORS: Record<DemoRequestStatus, { bg: string; fg: string }> = {
 };
 
 export default function App() {
+  // =====================================================
+  // NAVIGATION STATE
+  // =====================================================
+
+  const [activeTab, setActiveTab] = useState<"dashboard" | "blog">("dashboard");
+
   // =====================================================
   // UPLOAD STATE
   // =====================================================
@@ -726,15 +735,20 @@ export default function App() {
                 marginTop: 8,
               }}
             >
-              Manage your audio library and
-              contact requests.
+              {activeTab === "dashboard"
+                ? "Manage your audio library and contact requests."
+                : "Write, review and moderate blog content."}
             </p>
           </div>
 
           <button
             onClick={() => {
-              loadTracks();
-              loadDemoRequests();
+              if (activeTab === "dashboard") {
+                loadTracks();
+                loadDemoRequests();
+              } else {
+                window.location.reload();
+              }
             }}
             disabled={
               loadingTracks ||
@@ -776,6 +790,70 @@ export default function App() {
           </button>
         </div>
 
+        {/* =====================================================
+            TAB NAVIGATION
+        ===================================================== */}
+
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            marginBottom: 32,
+            borderBottom: "1px solid #1e293b",
+            paddingBottom: 4,
+          }}
+        >
+          <button
+            onClick={() => setActiveTab("dashboard")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 18px",
+              borderRadius: "10px 10px 0 0",
+              border: "none",
+              borderBottom:
+                activeTab === "dashboard"
+                  ? "2px solid #f59e0b"
+                  : "2px solid transparent",
+              background: "transparent",
+              color: activeTab === "dashboard" ? "#f59e0b" : "#94a3b8",
+              fontWeight: 700,
+              fontSize: 14,
+              cursor: "pointer",
+            }}
+          >
+            <LayoutDashboard size={16} /> Dashboard
+          </button>
+
+          <button
+            onClick={() => setActiveTab("blog")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 18px",
+              borderRadius: "10px 10px 0 0",
+              border: "none",
+              borderBottom:
+                activeTab === "blog"
+                  ? "2px solid #f59e0b"
+                  : "2px solid transparent",
+              background: "transparent",
+              color: activeTab === "blog" ? "#f59e0b" : "#94a3b8",
+              fontWeight: 700,
+              fontSize: 14,
+              cursor: "pointer",
+            }}
+          >
+            <Newspaper size={16} /> Blog
+          </button>
+        </div>
+
+        {activeTab === "blog" ? (
+          <BlogAdmin />
+        ) : (
+        <>
         {/* =====================================================
             STAT CARDS
         ===================================================== */}
@@ -1713,6 +1791,8 @@ export default function App() {
             </div>
           )}
         </section>
+        </>
+        )}
       </div>
     </div>
   );

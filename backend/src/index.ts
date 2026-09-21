@@ -7,6 +7,8 @@ import multipart from "@fastify/multipart";
 import { audioRoutes } from "./routes/audio.js";
 import { demoRequests } from "./routes/demoRequests.js";
 
+import { blogRoutes } from "./routes/blog.js";
+
 const server = Fastify({
   logger: true,
 
@@ -39,6 +41,8 @@ async function start() {
     await server.register(demoRequests, {
       prefix: "/api",
     });
+
+    await server.register(blogRoutes, { prefix: "/api" });
 
     const port = Number(
       process.env.PORT || 4000
