@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { ArrowLeft, Heart, Share2, Send } from "lucide-react";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import {
   type BlogComment,
   type BlogPost,
@@ -142,7 +144,8 @@ function BlogPostPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="max-w-3xl mx-auto px-4 py-10">
+      <Header />
+      <div className="max-w-3xl mx-auto px-4 pt-28 pb-10">
         <Link
           to="/blog"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-gold transition mb-6"
@@ -269,6 +272,8 @@ function BlogPostPage() {
           </form>
         </section>
       </div>
+
+      <Footer />
     </div>
   );
 }

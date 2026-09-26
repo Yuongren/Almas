@@ -1,6 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Search, PenSquare, X, Heart } from "lucide-react";
+import { Search, PenSquare, X, Heart, ChevronDown, Check, BookOpen } from "lucide-react";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Reveal } from "@/components/Reveal";
 import {
   type BlogCategory,
   type BlogPost,
@@ -55,26 +58,42 @@ function BlogIndex() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="max-w-6xl mx-auto px-4 py-10">
-        {/* Header */}
-        <div className="flex items-center justify-between gap-4 flex-wrap mb-8">
-          <div>
-            <h1 className="font-display font-bold text-3xl md:text-4xl text-gold-gradient">
-              Blog
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              News, updates and stories from our team and community.
-            </p>
+      <Header />
+
+      {/* HERO INTRO */}
+      <section className="relative pt-32 pb-16 md:pt-40 md:pb-20 bg-hero overflow-hidden">
+        <div className="absolute inset-0 grid-pattern opacity-40" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-gold/10 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-neon/10 blur-3xl" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
+
+        <div className="relative max-w-6xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-2 glass px-4 py-1.5 rounded-full text-xs text-muted-foreground mb-6">
+            <BookOpen className="h-3.5 w-3.5 text-gold" />
+            Stories, updates & studio notes
           </div>
 
-          <button
-            onClick={() => setShowWriteModal(true)}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition"
-          >
-            <PenSquare className="h-4 w-4" /> Write a Post
-          </button>
-        </div>
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] tracking-tight">
+            Voices from <span className="text-gold-gradient">Almas Skika</span> <br />
+            and our community.
+          </h1>
 
+          <p className="mt-5 max-w-xl mx-auto text-base md:text-lg text-muted-foreground">
+            News from the studio, tips on telecom audio, and stories shared by the people we work with.
+          </p>
+
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => setShowWriteModal(true)}
+              className="group inline-flex items-center gap-2 px-7 py-4 rounded-full bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition"
+            >
+              <PenSquare className="h-4 w-4" /> Write a Post
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-6xl mx-auto px-4 py-10">
         {/* Search */}
         <form onSubmit={handleSearchSubmit} className="flex gap-2 mb-6">
           <div className="relative flex-1">
@@ -156,6 +175,8 @@ function BlogIndex() {
         )}
       </div>
 
+      <Footer />
+
       {showWriteModal && (
         <WritePostModal
           categories={categories}
@@ -217,6 +238,83 @@ function PostCard({ post, large = false }: { post: BlogPost; large?: boolean }) 
         </div>
       </div>
     </Link>
+  );
+}
+
+function CategoryDropdown({
+  categories,
+  value,
+  onChange,
+}: {
+  categories: BlogCategory[];
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selected = categories.find((c) => c.id === value);
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 text-left"
+      >
+        <span className={selected ? "text-foreground" : "text-muted-foreground"}>
+          {selected ? selected.name : "No category"}
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute z-10 mt-2 w-full rounded-xl glass border border-gold/20 shadow-card overflow-hidden max-h-56 overflow-y-auto">
+          <button
+            type="button"
+            onClick={() => {
+              onChange("");
+              setOpen(false);
+            }}
+            className="w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-secondary/30 transition text-left"
+          >
+            No category
+            {!value && <Check className="h-4 w-4 text-gold" />}
+          </button>
+
+          {categories.length === 0 ? (
+            <p className="px-4 py-3 text-xs text-muted-foreground">No categories yet.</p>
+          ) : (
+            categories.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  onChange(cat.id);
+                  setOpen(false);
+                }}
+                className="w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-secondary/30 transition text-left"
+              >
+                {cat.name}
+                {value === cat.id && <Check className="h-4 w-4 text-gold" />}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -333,18 +431,11 @@ function WritePostModal({
             className="px-4 py-3 rounded-xl glass bg-input/40 outline-none focus:border-gold/60"
           />
 
-          <select
+          <CategoryDropdown
+            categories={categories}
             value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="px-4 py-3 rounded-xl glass bg-input/40 outline-none focus:border-gold/60"
-          >
-            <option value="">No category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+            onChange={setCategoryId}
+          />
 
           <input
             value={tags}
