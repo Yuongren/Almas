@@ -211,9 +211,10 @@
   .bg-gold-gradient { background: var(--gradient-gold); }
   .bg-mesh { background: var(--gradient-mesh); }
   .text-gold-gradient {
-    background: var(--gradient-gold);
+    background-image: var(--gradient-gold);
     -webkit-background-clip: text;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
     color: transparent;
   }
   .wave-bar {
@@ -224,6 +225,7 @@
   .text-gradient {
     -webkit-background-clip: text;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
     color: transparent;
   }
   .shadow-gold { box-shadow: var(--shadow-gold); }
@@ -293,7 +295,7 @@
 
   /* Animated gradient text — for headline accents that should feel alive, sparingly */
   .text-shimmer {
-    background: linear-gradient(
+    background-image: linear-gradient(
       110deg,
       var(--gold) 20%,
       var(--gold-glow) 40%,
@@ -304,6 +306,7 @@
     background-size: 250% 100%;
     -webkit-background-clip: text;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
     color: transparent;
     animation: shimmer 5s linear infinite;
   }

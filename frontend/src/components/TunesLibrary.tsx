@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { ArrowLeft, X, Play, Pause, Download, DollarSign } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -12,7 +13,6 @@ import {
   type RatingSummary,
 } from "@/lib/audio";
 import { StarRating } from "./StarRating";
-import { submitDemoRequest } from "@/lib/api/example.functions";
 
 export function TunesLibrary({ onClose }: { onClose: () => void }) {
   const [tracks, setTracks] = useState<AudioTrack[]>([]);
@@ -20,10 +20,6 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
   const [myRatings, setMyRatings] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [codeFor, setCodeFor] = useState<AudioTrack | null>(null);
-  const [demoFor, setDemoFor] = useState<AudioTrack | null>(null);
-  const [demoContact, setDemoContact] = useState("");
-  const [demoStatus, setDemoStatus] = useState<string | null>(null);
-  const [demoBusy, setDemoBusy] = useState(false);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [audioUrls, setAudioUrls] = useState<Record<string, string>>({});
 
@@ -275,16 +271,13 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
                       >
                         <Download className="h-3.5 w-3.5" /> Get
                       </button>
-                      <button
-                        onClick={() => {
-                          setDemoFor(t);
-                          setDemoContact("");
-                          setDemoStatus(null);
-                        }}
+                      <Link
+                        to="/contact"
+                        search={{ track: t.title }}
                         className="inline-flex items-center justify-center px-4 py-2 rounded-full glass text-xs font-semibold hover:border-gold/40 transition"
                       >
                         Request demo
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -329,77 +322,6 @@ export function TunesLibrary({ onClose }: { onClose: () => void }) {
             <button
               onClick={() => setCodeFor(null)}
               className="mt-5 w-full py-3 rounded-xl glass hover:border-gold/40 transition font-semibold text-sm"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      {demoFor && (
-        <div
-          className="fixed inset-0 z-[70] bg-background/80 backdrop-blur-md grid place-items-center p-4"
-          onClick={() => setDemoFor(null)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative max-w-sm w-full p-6 rounded-2xl glass shadow-gold border border-gold/30"
-          >
-            <button
-              onClick={() => setDemoFor(null)}
-              aria-label="Close"
-              className="absolute top-3 right-3 h-8 w-8 grid place-items-center rounded-full hover:bg-secondary/40 transition"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <div className="text-[10px] uppercase tracking-widest text-gold mb-2">Request Demo</div>
-            <h3 className="font-display font-bold text-xl mb-1">{demoFor.title}</h3>
-            <p className="text-sm text-muted-foreground mb-5">
-              Tell us the best way to reach you and our team will follow up with a demo for this audio.
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!demoContact.trim()) {
-                  setDemoStatus("Please enter your contact details.");
-                  return;
-                }
-                setDemoBusy(true);
-                submitDemoRequest({
-                  name: "Audio library demo request",
-                  contact: demoContact,
-                  request: `Demo requested for ${demoFor.title}.`,
-                })
-                  .then(() => {
-                    setDemoStatus(`Thanks! We'll reach out to ${demoContact} shortly.`);
-                    setDemoContact("");
-                  })
-                  .catch(() => setDemoStatus("Unable to submit your request."))
-                  .finally(() => setDemoBusy(false));
-              }}
-              className="space-y-4"
-            >
-              <label className="block text-sm text-muted-foreground">
-                Contact email or phone
-                <input
-                  value={demoContact}
-                  onChange={(e) => setDemoContact(e.target.value)}
-                  placeholder="you@example.com or +254700000000"
-                  className="mt-2 w-full px-4 py-3 rounded-xl glass bg-input/40 outline-none focus:border-gold/60"
-                />
-              </label>
-              {demoStatus && <p className="text-sm text-gold">{demoStatus}</p>}
-              <button
-                type="submit"
-                disabled={demoBusy}
-                className="w-full py-3 rounded-xl bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition"
-              >
-                {demoBusy ? "Sending…" : "Send request"}
-              </button>
-            </form>
-            <button
-              onClick={() => setDemoFor(null)}
-              className="mt-4 w-full py-3 rounded-xl glass hover:border-gold/40 transition font-semibold text-sm"
             >
               Close
             </button>

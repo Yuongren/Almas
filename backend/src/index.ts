@@ -9,6 +9,8 @@ import { demoRequests } from "./routes/demoRequests.js";
 
 import { blogRoutes } from "./routes/blog.js";
 
+import { reviewRoutes } from "./routes/reviews.js";
+
 const server = Fastify({
   logger: true,
 
@@ -43,6 +45,8 @@ async function start() {
     });
 
     await server.register(blogRoutes, { prefix: "/api" });
+
+    await server.register(reviewRoutes, { prefix: "/api" });
 
     const port = Number(
       process.env.PORT || 4000

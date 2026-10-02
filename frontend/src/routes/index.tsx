@@ -5,25 +5,27 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { TunesLibrary } from "@/components/TunesLibrary";
 import { Reveal } from "@/components/Reveal";
+import { SectionHeader } from "@/components/SectionHeader";
 import { supabase } from "@/integrations/supabase/client";
 import heroWaves from "@/assets/hero-waves.jpg";
 import studioMic from "@/assets/studio-mic.jpg";
 import {
-  Church, Languages, Megaphone, ArrowRight, Sparkles,
-  ShieldCheck, Zap, Globe2, Check, Headphones, Play, Pause,
-  BookOpen, Heart,
+  ArrowRight, Sparkles, Headphones, Play, Pause, BookOpen, Heart,
+  Check, ShieldCheck, Languages, Radio,
 } from "lucide-react";
-import { submitDemoRequest } from "@/lib/api/example.functions";
 import { fetchTracks, type AudioTrack } from "@/lib/audio";
 import { fetchPosts, resolveImageUrl, type BlogPost } from "@/lib/blog";
+import {
+  glanceStats, products, capabilities, audiences, principles, contactInfo,
+} from "@/lib/siteContent";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Almas Skika — Premium Telecom Audio Branding in Kenya" },
-      { name: "description", content: "Caller tunes, business greetings, voice overs and audio branding for Kenyan businesses, churches and campaigns. Crafted in studio. Delivered to every call." },
-      { property: "og:title", content: "Almas Skika — The Sound of Kenya" },
-      { property: "og:description", content: "Voice communication & telecom audio branding for brands, churches and campaigns across Kenya." },
+      { title: "Almas Skika — Your Voice. Your Brand." },
+      { name: "description", content: "We turn phone interactions into branded audio experiences. Caller tunes, business greetings, IVR/PABX prompts and multilingual voice content for Kenyan businesses." },
+      { property: "og:title", content: "Almas Skika — Your Voice. Your Brand." },
+      { property: "og:description", content: "Audio branding and telecom voice communication for businesses, churches and campaigns in Kenya." },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -31,41 +33,9 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const services = [
-  { icon: Megaphone, title: "Campaign Tunes", desc: "Political caller tunes that mobilise voters across counties.", featured: true },
-  { icon: Church, title: "Church Audio", desc: "Sermons, jingles and worship audio mastered for clarity." },
-  { icon: Languages, title: "Native Languages", desc: "Swahili, Kikuyu, Luo, Kalenjin, Luhya — voices that feel home." },
-];
-
-const audience = ["Businesses", "Churches", "Political Aspirants", "SMEs", "Schools", "Corporates", "Campaign Teams", "NGOs"];
-
-const steps = [
-  { n: "01", t: "Brief", d: "We listen — to your brand, audience and tone of voice." },
-  { n: "02", t: "Script & Cast", d: "Words that move. Voices that match your identity." },
-  { n: "03", t: "Studio", d: "Recorded, layered and mastered by senior audio engineers." },
-  { n: "04", t: "Deploy", d: "Pushed live across Safaricom, Airtel and Telkom networks." },
-];
+const principleIcons = [Languages, ShieldCheck, Radio];
 
 function Index() {
-  const [demoForm, setDemoForm] = useState({ name: "", contact: "", request: "" });
-  const [demoStatus, setDemoStatus] = useState<string | null>(null);
-  const [demoBusy, setDemoBusy] = useState(false);
-
-  async function handleDemoSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setDemoBusy(true);
-    setDemoStatus(null);
-    try {
-      await submitDemoRequest(demoForm);
-      setDemoForm({ name: "", contact: "", request: "" });
-      setDemoStatus("Thanks. We'll be in touch within 24 hours.");
-    } catch {
-      setDemoStatus("Unable to submit your request.");
-    } finally {
-      setDemoBusy(false);
-    }
-  }
-
   const [libraryOpen, setLibraryOpen] = useState(false);
 
   // ---- Latest Tunes (live from the audio library) ----
@@ -114,7 +84,7 @@ function Index() {
       <Header />
 
       {/* HERO */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-32 bg-hero overflow-hidden">
+      <section className="relative pt-28 pb-14 md:pt-36 md:pb-20 bg-hero overflow-hidden bg-grain">
         <div className="absolute inset-0 grid-pattern opacity-40" />
         <img
           src={heroWaves}
@@ -122,123 +92,234 @@ function Index() {
           width={1536} height={1536}
           className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-screen"
         />
-        <div className="absolute -top-32 -left-24 w-[28rem] h-[28rem] rounded-full bg-gold/10 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-[28rem] h-[28rem] rounded-full bg-neon/10 blur-3xl" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" />
+        <div className="ambient-blob absolute -top-32 -left-24 w-[28rem] h-[28rem] rounded-full bg-gold/10 blur-3xl" />
+        <div className="ambient-blob absolute -bottom-24 -right-24 w-[28rem] h-[28rem] rounded-full bg-neon/10 blur-3xl" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background" />
 
         <div className="relative max-w-6xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 glass px-4 py-1.5 rounded-full text-xs text-muted-foreground mb-6 animate-[float_6s_ease-in-out_infinite]">
+          <div className="inline-flex items-center gap-2 glass px-4 py-1.5 rounded-full text-xs text-muted-foreground mb-5 animate-[float_6s_ease-in-out_infinite]">
             <Sparkles className="h-3.5 w-3.5 text-gold" />
-            Kenya's premier telecom audio studio
+            Audio branding & telecom voice solutions · Kenya
           </div>
-          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-bold leading-[1.05] tracking-tight glow-text">
-            The Sound <br className="sm:hidden" />
-            <span className="text-gold-gradient">Your Brand</span> <br />
-            Deserves.
+
+          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold leading-[1.05] tracking-tight glow-text">
+            Your Voice. <br />
+            <span className="text-shimmer">Your Brand.</span>
           </h1>
-          <p className="mt-6 max-w-xl mx-auto text-base md:text-lg text-muted-foreground">
-            Caller tunes, voice overs and telecom audio branding — engineered in Nairobi, delivered to every phone in Kenya.
+
+          <p className="mt-5 text-lg md:text-xl font-display text-foreground/90">
+            We turn phone interactions into branded audio experiences.
+          </p>
+          <p className="mt-3 max-w-xl mx-auto text-muted-foreground">
+            Caller tunes, business greetings, IVR/PABX prompts and multilingual voice content —
+            scripted, voiced and produced for Kenyan businesses.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="#contact" className="group inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition text-base">
-              Request a Demo <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition" />
-            </a>
-            <Link to="/features" className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full glass font-semibold hover:bg-secondary/50 transition">
-              Hear our work
+          <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/contact"
+              className="btn-sheen group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition"
+            >
+              Reach out to us <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition" />
             </Link>
+            <button
+              onClick={() => setLibraryOpen(true)}
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full glass font-semibold hover:bg-secondary/50 transition"
+            >
+              <Headphones className="h-4 w-4" /> Hear samples
+            </button>
           </div>
 
-          <div className="mt-14">
+          <div className="mt-10">
             <AudioWave bars={40} className="max-w-md mx-auto" />
           </div>
         </div>
       </section>
 
-      {/* TRUST STRIP */}
-      <section className="border-y border-border/50 py-6 bg-card/30">
-        <Reveal className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {[
-            { k: "500+", v: "Brands voiced" },
-            { k: "3", v: "Major networks" },
-            { k: "12+", v: "Local languages" },
-            { k: "24h", v: "Turnaround" },
-          ].map((s) => (
+      {/* AT A GLANCE */}
+      <section className="border-y border-border/50 py-5 bg-card/30">
+        <Reveal className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          {glanceStats.map((s) => (
             <div key={s.v}>
-              <div className="text-2xl md:text-3xl font-display font-bold text-gold-gradient">{s.k}</div>
-              <div className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{s.v}</div>
+              <div className="text-xl md:text-2xl font-display font-bold text-gold-gradient">{s.k}</div>
+              <div className="text-[11px] uppercase tracking-widest text-muted-foreground mt-1">{s.v}</div>
             </div>
           ))}
         </Reveal>
       </section>
 
-      {/* SERVICES */}
-      <section id="services" className="py-20 md:py-28 relative">
-        <div className="max-w-6xl mx-auto px-4">
-          <Reveal className="max-w-2xl">
-            <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">What we craft</div>
-            <h2 className="text-3xl md:text-5xl font-bold">Audio that does the talking.</h2>
-            <p className="mt-4 text-muted-foreground">Every product is mixed, mastered and ready for telecom deployment from day one.</p>
+      {/* THE QUESTION */}
+      <section className="py-14 md:py-20">
+        <div className="max-w-6xl mx-auto px-4 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <Reveal>
+            <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">The question that matters</div>
+            <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+              What do your customers hear while they wait for you to answer?
+            </h2>
+            <p className="mt-4 text-muted-foreground">
+              Silence. A generic ring. Or a message that welcomes them, explains your service and
+              sounds unmistakably like you. That waiting time is brand time — we make it count.
+            </p>
+            <Link
+              to="/features"
+              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-gold hover:gap-3 transition-all"
+            >
+              See what we make <ArrowRight className="h-4 w-4" />
+            </Link>
           </Reveal>
 
-          <div className="mt-12 grid sm:grid-cols-2 gap-4">
-            {services.map((s, i) => (
-              <Reveal key={s.title} delay={i * 80} className={s.featured ? "sm:col-span-2" : ""}>
-                <div
-                  className={[
-                    "group relative p-6 rounded-2xl glass shadow-card hover:-translate-y-1 transition-all duration-300 hover:shadow-gold h-full",
-                    s.featured ? "border-gold/40 bg-gold/5" : "",
-                  ].join(" ")}
-                >
-                  {s.featured && (
-                    <span className="absolute top-4 right-4 text-[10px] font-semibold uppercase tracking-wider text-gold">In the spotlight</span>
-                  )}
-                  <div className="h-11 w-11 rounded-xl bg-gold-gradient grid place-items-center shadow-gold mb-5 group-hover:scale-110 transition">
-                    <s.icon className="h-5 w-5 text-primary-foreground" />
+          <Reveal delay={100} className="grid sm:grid-cols-2 gap-4">
+            <div className="p-6 rounded-2xl border border-border/60 bg-card/40">
+              <div className="text-[11px] uppercase tracking-widest text-muted-foreground mb-3">Without a branded experience</div>
+              <AudioWave bars={16} className="h-10 w-full opacity-30" />
+              <p className="mt-4 text-sm text-muted-foreground">
+                Silence or a generic ring-back. Callers wait, wonder and forget.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl glass border-gold/40 shadow-gold">
+              <div className="text-[11px] uppercase tracking-widest text-gold mb-3">With Almas Skika</div>
+              <AudioWave bars={16} variant="gold" className="h-10 w-full" />
+              <p className="mt-4 text-sm">
+                A branded greeting, service message or promotion — in the language your customers speak.
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* PRODUCTS */}
+      <section className="py-14 md:py-20 bg-card/30">
+        <div className="max-w-6xl mx-auto px-4">
+          <SectionHeader
+            eyebrow="What we craft"
+            title="Start with a tune. Grow into a voice."
+            description="A simple product ladder: begin with a caller tune, then add multilingual audio, business voice packages and IVR/PABX prompts as your needs grow."
+            action={
+              <Link to="/pricing" className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:gap-3 transition-all">
+                View pricing <ArrowRight className="h-4 w-4" />
+              </Link>
+            }
+          />
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {products.map((p, i) => (
+              <Reveal key={p.title} delay={(i % 3) * 70}>
+                <div className="card-interactive group h-full p-6 rounded-2xl glass shadow-card flex flex-col">
+                  <div className="h-11 w-11 rounded-xl bg-gold-gradient grid place-items-center shadow-gold mb-4 group-hover:scale-110 transition">
+                    <p.icon className="h-5 w-5 text-primary-foreground" />
                   </div>
-                  <h3 className="font-display font-semibold text-lg">{s.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed max-w-xl">{s.desc}</p>
-                  <div className="mt-5 h-px bg-gradient-to-r from-gold/40 via-neon/30 to-transparent" />
+                  <h3 className="font-display font-semibold text-lg">{p.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-1">{p.desc}</p>
+                  <div className="mt-4 pt-4 border-t border-border/50 text-xs font-semibold uppercase tracking-wider text-gold">
+                    {p.from}
+                  </div>
                 </div>
               </Reveal>
             ))}
           </div>
 
-          <Reveal className="mt-12 flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={() => setLibraryOpen(true)}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition"
-            >
-              <Headphones className="h-4 w-4" /> Hear samples
-            </button>
-            <Link to="/features" className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full glass font-semibold hover:bg-secondary/50 transition">
-              Explore all features <ArrowRight className="h-4 w-4" />
-            </Link>
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            Indicative launch prices — final quotes depend on voice talent, languages, revisions, music licensing and integration.
+          </p>
+        </div>
+      </section>
+
+      {/* HOW WE DO IT */}
+      <section className="py-14 md:py-20">
+        <div className="max-w-6xl mx-auto px-4">
+          <SectionHeader
+            eyebrow="How we do it"
+            title={<>Four skills, <span className="text-gold-gradient">one accountable team.</span></>}
+            description="We combine scripting, voice-over, production and delivery — so you deal with one studio instead of stitching together several suppliers."
+          />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {capabilities.map((c, i) => (
+              <Reveal key={c.title} delay={i * 70}>
+                <div className="relative h-full p-6 rounded-2xl border border-border/60 bg-card/40 hover:border-gold/40 transition">
+                  <div className="font-display text-4xl font-bold text-gold-gradient opacity-80">0{i + 1}</div>
+                  <c.icon className="h-5 w-5 text-gold mt-3" />
+                  <div className="mt-2 font-semibold">{c.title}</div>
+                  <div className="text-sm text-muted-foreground mt-1">{c.desc}</div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WHY — positioning */}
+      <section className="py-14 md:py-20 bg-mesh relative overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-gold/10 blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-neon/10 blur-3xl" />
+        <div className="relative max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-10 items-center">
+          <Reveal className="relative">
+            <div className="absolute inset-0 bg-gold/20 blur-3xl rounded-full" />
+            <img
+              src={studioMic}
+              alt="Studio microphone"
+              width={1024} height={1024}
+              loading="lazy"
+              className="relative rounded-3xl shadow-card border border-border/60 w-full max-h-[440px] object-cover"
+            />
+            <div className="absolute -bottom-5 -right-3 glass rounded-2xl p-4 shadow-gold animate-[float_6s_ease-in-out_infinite]">
+              <AudioWave bars={14} variant="gold" className="h-12 w-32" />
+              <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1 text-center">Now recording</div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">Why Almas Skika</div>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Between a creative agency <br />
+              <span className="text-gold-gradient">and a telecom provider.</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground">
+              We own the message, the voice, the language and the sound — and partner for technical
+              activation, so your brand stays in one pair of hands.
+            </p>
+
+            <ul className="mt-6 space-y-4">
+              {principles.map((f, i) => {
+                const Icon = principleIcons[i];
+                return (
+                  <li key={f.title} className="flex gap-4">
+                    <div className="h-10 w-10 shrink-0 rounded-xl glass grid place-items-center text-gold">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="font-semibold">{f.title}</div>
+                      <div className="text-sm text-muted-foreground">{f.desc}</div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </Reveal>
         </div>
       </section>
 
       {/* LATEST TUNES — live from the audio library */}
       {latestTracks.length > 0 && (
-        <section className="py-20 md:py-28 bg-card/30 relative">
+        <section className="py-14 md:py-20">
           <div className="max-w-6xl mx-auto px-4">
-            <Reveal className="flex items-end justify-between gap-4 flex-wrap mb-10">
-              <div className="max-w-2xl">
-                <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">Fresh off the mix</div>
-                <h2 className="text-3xl md:text-5xl font-bold">Latest tunes.</h2>
-              </div>
-              <button
-                onClick={() => setLibraryOpen(true)}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:gap-3 transition-all"
-              >
-                Browse full library <ArrowRight className="h-4 w-4" />
-              </button>
-            </Reveal>
+            <SectionHeader
+              eyebrow="Fresh off the mix"
+              title="Latest tunes."
+              description="Press play and hear the difference a branded sound makes."
+              action={
+                <button
+                  onClick={() => setLibraryOpen(true)}
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:gap-3 transition-all"
+                >
+                  Browse full library <ArrowRight className="h-4 w-4" />
+                </button>
+              }
+            />
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {latestTracks.map((track, i) => (
-                <Reveal key={track.id} delay={i * 80}>
-                  <div className="p-6 rounded-2xl glass shadow-card hover:border-gold/40 transition h-full flex flex-col">
+                <Reveal key={track.id} delay={i * 70}>
+                  <div className="card-interactive p-6 rounded-2xl glass shadow-card h-full flex flex-col">
                     <div className="text-[10px] uppercase tracking-widest text-gold mb-2">
                       {track.category.replace(/_/g, " ")}
                     </div>
@@ -277,119 +358,53 @@ function Index() {
         </section>
       )}
 
-      {/* FEATURE / WHY */}
-      <section className="py-20 md:py-28 bg-mesh relative overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-gold/10 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-neon/10 blur-3xl" />
-        <div className="relative max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-          <Reveal className="relative">
-            <div className="absolute inset-0 bg-gold/20 blur-3xl rounded-full" />
-            <img
-              src={studioMic}
-              alt="Studio microphone"
-              width={1024} height={1024}
-              loading="lazy"
-              className="relative rounded-3xl shadow-card border border-border/60"
-            />
-            <div className="absolute -bottom-6 -right-4 glass rounded-2xl p-4 shadow-gold animate-[float_6s_ease-in-out_infinite]">
-              <AudioWave bars={14} variant="gold" className="h-12 w-32" />
-              <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1 text-center">Now recording</div>
-            </div>
-          </Reveal>
-
-          <Reveal delay={120}>
-            <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">Why Almas Skika</div>
-            <h2 className="text-3xl md:text-5xl font-bold">Built in Kenya. <br /><span className="text-gold-gradient">Heard everywhere.</span></h2>
-            <p className="mt-4 text-muted-foreground">We combine broadcast-grade engineering with deep cultural fluency — so your sound lands the moment a call connects.</p>
-
-            <ul className="mt-8 space-y-4">
-              {[
-                { i: ShieldCheck, t: "Telecom-certified delivery", d: "Pre-approved formats for Safaricom Skiza, Airtel Hello Tunes & Telkom." },
-                { i: Zap, t: "24-hour turnaround", d: "Fast-track packages for campaigns and product launches." },
-                { i: Globe2, t: "12+ native languages", d: "Voice talent fluent in every major Kenyan language." },
-              ].map((f) => (
-                <li key={f.t} className="flex gap-4">
-                  <div className="h-10 w-10 shrink-0 rounded-xl glass grid place-items-center text-gold">
-                    <f.i className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">{f.t}</div>
-                    <div className="text-sm text-muted-foreground">{f.d}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section id="testimonials" className="py-20 md:py-28 relative">
+      {/* WHO WE SERVE */}
+      <section className="py-14 md:py-20 bg-card/30">
         <div className="max-w-6xl mx-auto px-4">
-          <Reveal className="max-w-2xl mb-12">
-            <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">Client reviews</div>
-            <h2 className="text-3xl md:text-5xl font-bold">Trusted by the voices <span className="text-gold-gradient">of Kenya.</span></h2>
-          </Reveal>
-          <div className="grid md:grid-cols-3 gap-5">
-            {[
-              { q: "Almas Skika built our Skiza tune in 48 hours. Call volumes lifted instantly.", n: "Wanjiku Mwangi", r: "Marketing Lead", c: "Jambo Africa", l: "JA" },
-              { q: "Their Swahili voice talent is unmatched. Our IVR finally sounds like us.", n: "David Otieno", r: "CTO", c: "Pesa Plus", l: "P+" },
-              { q: "Mastered, mixed and deployed across all three networks. Truly premium work.", n: "Grace Kamau", r: "Campaign Director", c: "Kenya Forward", l: "KF" },
-            ].map((t, i) => (
-              <Reveal key={t.n} delay={i * 80}>
-                <figure className="p-7 rounded-2xl glass shadow-card hover:border-gold/40 transition flex flex-col h-full">
-                  <div className="flex gap-1 text-gold mb-4" aria-label="5 star rating">
-                    {Array.from({ length: 5 }).map((_, i) => (<span key={i}>★</span>))}
-                  </div>
-                  <blockquote className="text-sm md:text-base leading-relaxed flex-1">"{t.q}"</blockquote>
-                  <figcaption className="mt-6 flex items-center gap-3 pt-5 border-t border-border/50">
-                    <div className="h-11 w-11 rounded-xl bg-gold-gradient grid place-items-center font-display font-bold text-primary-foreground text-sm shrink-0" aria-hidden>{t.l}</div>
-                    <div>
-                      <div className="font-semibold text-sm">{t.n}</div>
-                      <div className="text-xs text-muted-foreground">{t.r} · {t.c}</div>
-                    </div>
-                  </figcaption>
-                </figure>
-              </Reveal>
+          <SectionHeader
+            center
+            eyebrow="Who we serve"
+            title="Built for phone-dependent organisations."
+            description="If your customers, members or congregation call you, your phone experience is part of your brand."
+          />
+          <Reveal delay={100} className="flex flex-wrap justify-center gap-3">
+            {audiences.map((a) => (
+              <span key={a} className="px-5 py-2.5 rounded-full glass text-sm font-medium hover:border-gold/40 hover:text-gold transition cursor-default">
+                <Check className="inline h-3.5 w-3.5 mr-2 text-gold" />{a}
+              </span>
             ))}
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* FROM THE BLOG — live from published posts */}
       {latestPosts.length > 0 && (
-        <section className="py-20 md:py-28 bg-card/30 relative">
+        <section className="py-14 md:py-20">
           <div className="max-w-6xl mx-auto px-4">
-            <Reveal className="flex items-end justify-between gap-4 flex-wrap mb-10">
-              <div className="max-w-2xl">
-                <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">From the blog</div>
-                <h2 className="text-3xl md:text-5xl font-bold">Stories & updates.</h2>
-              </div>
-              <Link
-                to="/blog"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:gap-3 transition-all"
-              >
-                Visit the blog <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Reveal>
+            <SectionHeader
+              eyebrow="From the blog"
+              title="Stories & updates."
+              description="News from the studio and voices from our community."
+              action={
+                <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:gap-3 transition-all">
+                  Visit the blog <ArrowRight className="h-4 w-4" />
+                </Link>
+              }
+            />
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {latestPosts.map((post, i) => {
                 const image = resolveImageUrl(post.featured_image_path);
                 return (
-                  <Reveal key={post.id} delay={i * 80}>
+                  <Reveal key={post.id} delay={i * 70}>
                     <Link
                       to="/blog/$slug"
                       params={{ slug: post.slug }}
-                      className="group block rounded-2xl glass overflow-hidden hover:border-gold/40 transition h-full"
+                      className="card-interactive group block rounded-2xl glass overflow-hidden h-full"
                     >
                       <div className="h-36 bg-hero overflow-hidden">
                         {image ? (
-                          <img
-                            src={image}
-                            alt={post.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition"
-                          />
+                          <img src={image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <BookOpen className="h-8 w-8 opacity-40" />
@@ -398,18 +413,12 @@ function Index() {
                       </div>
                       <div className="p-5">
                         {post.blog_categories && (
-                          <span className="text-[10px] uppercase tracking-widest text-gold">
-                            {post.blog_categories.name}
-                          </span>
+                          <span className="text-[10px] uppercase tracking-widest text-gold">{post.blog_categories.name}</span>
                         )}
-                        <h3 className="font-display font-semibold text-base mt-1 line-clamp-2">
-                          {post.title}
-                        </h3>
+                        <h3 className="font-display font-semibold text-base mt-1 line-clamp-2">{post.title}</h3>
                         <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground pt-4 border-t border-border/50">
                           <span>{post.author_name}</span>
-                          <span className="flex items-center gap-1">
-                            <Heart className="h-3 w-3" /> {post.like_count}
-                          </span>
+                          <span className="flex items-center gap-1"><Heart className="h-3 w-3" /> {post.like_count}</span>
                         </div>
                       </div>
                     </Link>
@@ -421,76 +430,39 @@ function Index() {
         </section>
       )}
 
-      {/* PROCESS */}
-      <section id="process" className="py-20 md:py-28">
-        <div className="max-w-6xl mx-auto px-4">
-          <Reveal className="max-w-2xl">
-            <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">Process</div>
-            <h2 className="text-3xl md:text-5xl font-bold">From brief to broadcast in days.</h2>
-          </Reveal>
-          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {steps.map((s, i) => (
-              <Reveal key={s.n} delay={i * 80}>
-                <div className="relative p-6 rounded-2xl border border-border/60 bg-card/40 hover:border-gold/40 transition h-full">
-                  <div className="font-display text-5xl font-bold text-gold-gradient opacity-80">{s.n}</div>
-                  <div className="mt-3 font-semibold">{s.t}</div>
-                  <div className="text-sm text-muted-foreground mt-1">{s.d}</div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* AUDIENCE */}
-      <section id="audience" className="py-20 md:py-28 bg-card/30">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <Reveal>
-            <div className="text-xs uppercase tracking-[0.3em] text-gold mb-3">Who we serve</div>
-            <h2 className="text-3xl md:text-5xl font-bold">Sound for every Kenyan organisation.</h2>
-          </Reveal>
-          <Reveal delay={120} className="mt-10 flex flex-wrap justify-center gap-3">
-            {audience.map((a) => (
-              <span key={a} className="px-5 py-2.5 rounded-full glass text-sm font-medium hover:border-gold/40 hover:text-gold transition cursor-default">
-                <Check className="inline h-3.5 w-3.5 mr-2 text-gold" />{a}
-              </span>
-            ))}
-          </Reveal>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section id="contact" className="py-20 md:py-28 relative overflow-hidden">
+      {/* CLOSING CTA — buttons instead of a form */}
+      <section className="py-14 md:py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-hero" />
         <div className="absolute inset-0 grid-pattern opacity-30" />
+        <div className="ambient-blob absolute -top-24 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] rounded-full bg-gold/10 blur-3xl" />
         <Reveal className="relative max-w-3xl mx-auto px-4 text-center">
-          <AudioWave bars={28} className="max-w-xs mx-auto mb-8" />
-          <h2 className="text-3xl md:text-5xl font-bold">Let's make your brand <span className="text-gold-gradient">heard.</span></h2>
-          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">Tell us about your project. We'll send back a custom audio sample within 48 hours — no obligation.</p>
+          <AudioWave bars={28} className="max-w-xs mx-auto mb-6" />
+          <h2 className="text-3xl md:text-5xl font-bold">
+            Ready to make your brand <span className="text-gold-gradient">heard?</span>
+          </h2>
+          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
+            Learn more about who we are, or tell us about your project and let's help you hear your brand.
+          </p>
 
-          <form className="mt-10 grid gap-4 max-w-md mx-auto text-left" onSubmit={handleDemoSubmit}>
-            <div className="grid gap-1.5">
-              <label htmlFor="name" className="text-xs uppercase tracking-widest text-muted-foreground">Name</label>
-              <input id="name" name="name" required maxLength={100} value={demoForm.name} onChange={(e) => setDemoForm({ ...demoForm, name: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="Your full name" />
-            </div>
-            <div className="grid gap-1.5">
-              <label htmlFor="email" className="text-xs uppercase tracking-widest text-muted-foreground">Email</label>
-              <input id="email" name="email" type="email" required maxLength={255} value={demoForm.contact} onChange={(e) => setDemoForm({ ...demoForm, contact: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground" placeholder="you@company.com" />
-            </div>
-            <div className="grid gap-1.5">
-              <label htmlFor="message" className="text-xs uppercase tracking-widest text-muted-foreground">Message</label>
-              <textarea id="message" name="message" rows={4} required maxLength={1000} value={demoForm.request} onChange={(e) => setDemoForm({ ...demoForm, request: e.target.value })} className="px-5 py-3.5 rounded-xl glass bg-input/40 outline-none focus:border-gold/60 transition placeholder:text-muted-foreground resize-none" placeholder="What kind of audio do you need?" />
-            </div>
-            {demoStatus && <p className="text-sm text-gold" role="status">{demoStatus}</p>}
-            <button type="submit" disabled={demoBusy} className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.01] transition disabled:opacity-50">
-              {demoBusy ? "Sending…" : "Request a Demo"} {!demoBusy && <ArrowRight className="h-4 w-4" />}
-            </button>
-          </form>
+          <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              to="/about"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full glass font-semibold hover:bg-secondary/50 transition"
+            >
+              Get to know more about us
+            </Link>
+            <Link
+              to="/contact"
+              className="btn-sheen group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-gold-gradient text-primary-foreground font-semibold shadow-gold hover:scale-[1.02] transition"
+            >
+              Reach out to us <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition" />
+            </Link>
+          </div>
 
-          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-6 text-sm text-muted-foreground">
-            <a href="tel:+254707002424" className="hover:text-gold transition">+254 707 002 424</a>
-            <a href="mailto:hello@almasskika.co.ke" className="hover:text-gold transition">hello@almasskika.co.ke</a>
-            <span>Nairobi, Kenya</span>
+          <div className="mt-8 flex flex-col sm:flex-row justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+            <a href={contactInfo.phoneHref} className="hover:text-gold transition">{contactInfo.phone}</a>
+            <a href={`mailto:${contactInfo.email}`} className="hover:text-gold transition">{contactInfo.email}</a>
+            <span>{contactInfo.location}</span>
           </div>
         </Reveal>
       </section>

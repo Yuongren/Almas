@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-// Fades + slides content in the moment it scrolls into view.
-// No animation library needed — just an IntersectionObserver.
+// Scroll-reveal wrapper. Uses the `.reveal` / `.is-visible` classes already
+// defined in styles.css (smoother easing + honours prefers-reduced-motion).
 export function Reveal({
   children,
   className = "",
@@ -25,7 +25,7 @@ export function Reveal({
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.12 }
     );
 
     observer.observe(node);
@@ -35,9 +35,7 @@ export function Reveal({
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-      } ${className}`}
+      className={`reveal ${visible ? "is-visible" : ""} ${className}`}
       style={{ transitionDelay: visible ? `${delay}ms` : "0ms" }}
     >
       {children}
